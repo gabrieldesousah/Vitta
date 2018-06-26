@@ -96,6 +96,25 @@
     </div>
     @endif 
 
+    @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Recepção" ||  $user->fields->Função[0] == "Falcão" ))
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Falcão</div>
+
+                <div class="panel-body">
+
+                    <div class="col-lg-4">
+                        <b>Abordagens</b>
+
+                        <a href="{{ url('falcao/abordagens') }}" class="btn btn-primary btn-custom" target="_blank">Realizar abordagens</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Laboratório" ))
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
@@ -107,7 +126,13 @@
                     <div class="col-lg-4">
                         <b>Cadastro de pacientes</b>
 
-                        <a href="{{ url('pacientes') }}" class="btn btn-primary btn-custom" target="_blank">Cadstro de pacientes</a>
+                        <a href="{{ url('pacientes') }}" class="btn btn-primary btn-custom" target="_blank">Cadastro de pacientes</a>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <b>Buscar Resultados</b>
+
+                        <a href="{{ url('buscarresultados') }}" class="btn btn-primary btn-custom" target="_blank">Buscar Resultados</a>
                     </div>
 
                 </div>

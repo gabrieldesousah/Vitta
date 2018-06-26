@@ -11,22 +11,6 @@ use TANIOS\Airtable\Airtable;
 
 class OrcamentoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-     
-    public function index()
-    {
-        
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $airtable = new Airtable(array(
@@ -110,50 +94,5 @@ class OrcamentoController extends Controller
             ->with('exames', $exames)
             ->withInput();
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Orcamento  $Orcamento
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Orcamento $Orcamento)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Orcamento  $Orcamento
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Orcamento $Orcamento)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Orcamento  $Orcamento
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Orcamento $Orcamento)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Orcamento  $Orcamento
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Orcamento $Orcamento)
-    {
-        //
     }
 }

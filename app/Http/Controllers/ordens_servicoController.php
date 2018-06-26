@@ -12,17 +12,17 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class ordens_servicoController extends Controller
 {
     public $colunasAceitas = array(
-        "Nro"      => ["Nro", "nro"],
-        "Paciente"   => ["Paciente", "paciente"],
-        "Status"     => ["Status", "status"],
-        "Tratamento"       => ["Tratamento", "tratamento"],
-        "Data"      => ["Data", "data"],
+        "Nro" => ["Nro", "nro"],
+        "Paciente"  => ["Paciente", "paciente"],
+        "Status" => ["Status", "status"],
+        "Tratamento" => ["Tratamento", "tratamento"],
+        "Data" => ["Data", "data"],
         "Valor_Total"	=> ["Valor Total", "valortotal"],//ignora os espacos
-        "Pago"        => ["Pago", "pago"],
-        "Saldo"      => ["Saldo", "saldo"],
-        "Usuario"  => ["Usuário", "usuario", "Usuario", "usurio"],
+        "Pago" => ["Pago", "pago"],
+        "Saldo" => ["Saldo", "saldo"],
+        "Usuario" => ["Usuário", "usuario", "Usuario", "usurio"],
         "Unidade" => ["Unidade", "unidade"],
-        "ignorar"   => []
+        "ignorar" => []
     );
 
     public function index(){
