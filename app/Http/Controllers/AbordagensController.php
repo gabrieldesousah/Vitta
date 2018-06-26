@@ -45,9 +45,6 @@ class AbordagensController extends Controller
           'base'      => 'appRSXoEylxhvJ61B',
       ));
 
-      $request = $airtable->getContent( 'Contacts' );
-
-      //dd(Auth::user()->airtable_id);
       $expended = $airtable->getContent( 'Colaboradores/'.Auth::user()->airtable_id, false, [
           'RequisiçõesDeCompraVittalecas'      => [
               'table'         => 'Requisi%C3%A7%C3%B5es%20de%20Compra%20Vittalecas',

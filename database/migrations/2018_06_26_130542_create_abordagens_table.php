@@ -15,7 +15,7 @@ class CreateAbordagensTable extends Migration
     {
         Schema::create('abordagens', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('unidade_id')->unsigned();
+            $table->integer('unidade_id')->nullable();
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')
                 ->references('id')
