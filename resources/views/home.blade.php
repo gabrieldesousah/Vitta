@@ -153,7 +153,7 @@
                     <div class="col-lg-4">
                         <b>Abordagens</b>
 
-                        <a href="{{ url('abordagens') }}" class="btn btn-primary btn-custom">Cadastro de abordagens</a>
+                        <a href="{{ url('falcao/abordagens') }}" class="btn btn-primary btn-custom">Cadastro de abordagens</a>
                         <a href="{{ url('os') }}" class="btn btn-primary btn-custom">Subir Ordens de Serviço</a>
                     </div>
 
