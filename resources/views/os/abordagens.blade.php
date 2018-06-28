@@ -15,7 +15,6 @@
                     @endif
 
                     <form class="form-horizontal" method="POST" action="{{ url('/falcao/abordagens/store') }}">
-                        {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                             <label for="name" class="col-md-4 control-label">Nome do paciente</label>

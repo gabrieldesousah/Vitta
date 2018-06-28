@@ -99,6 +99,7 @@ class AbordagensController extends Controller
                 ['created_at', '>=', $date_start],
                 ['created_at', '<', $date_end]
             ])
+            ->orderBy('user_id')
             ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda']);
 
             date_default_timezone_set("UTC");
@@ -113,6 +114,7 @@ class AbordagensController extends Controller
                 ['created_at', '>=', $date_start],
                 ['created_at', '<', $date_end]
             ])
+            ->orderBy('user_id')
             ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda']);
         }
         else 
@@ -134,52 +136,11 @@ class AbordagensController extends Controller
                 ['created_at', '>=', $date_start],
                 ['created_at', '<=', $date_end]
             ])
+            ->orderBy('user_id')
             ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda']);
         }
 
         dd($abordagens);
-
-        $data = [];
-        $tmacollect = collect();
-        $tmacollect_medio = collect();
-        foreach ($abordagens as $i => $triagem) {
-            $triagem_dt_cha = strtotime($triagem->dt_cha);
-            $triagem_created_at = strtotime($triagem->created_at);
-            $tma = $triagem_dt_cha - $triagem_created_at;
-            // dd($tma);
-            // dd(date('H', $tma));
-            if( date('H', $tma) == '0' && date('i', $tma) < '40' ){
-                if( '7' <= date('H', $triagem_created_at) && date('H', $triagem_created_at) < '20'){
-                    // dd($triagem_dt_cha);
-                    // dd(date('d', $triagem_dt_cha));
-                    $data[$i] = $triagem;
-                    $data[$i]["ano"] = date('Y', $triagem_created_at);
-                    $data[$i]["mes"] = date('m', $triagem_created_at);
-                    $data[$i]["dia"] = date('d', $triagem_created_at);
-                    $data[$i]["hora"] = date('H', $triagem_created_at);
-                    $data[$i]["dt_cha"] = $triagem_dt_cha;
-                    $data[$i]["created_at"] = $triagem_created_at;
-                    $data[$i]["tma"] = date('H:i', $triagem_dt_cha - $triagem_created_at);
-
-                    $tma_time = $triagem_dt_cha - $triagem_created_at;
-                
-                    $tma = [
-                        'time' => $tma_time,
-                        'faixa' => date('H', $triagem_created_at),
-                    ];
-
-                    $tmacollect->prepend($tma);
-                $tmacollect_medio->prepend($tma_time);    
-                    $i++;
-                    // dd($tmacollect);
-                }
-            }
-        }
-        $grouped = $tmacollect->mapToGroups(function ($item, $key) {
-            return [$item['faixa'] => $item['time']];
-        });
-        // dd($tmacollect);
-        // dd($grouped);
 
         $tmacollect_medio = $tmacollect_medio->sort()->values();
 

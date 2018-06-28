@@ -13,6 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'login',
-        'falcao/abordages/store'
+        'falcao/abordages/store',
+        '*'
     ];
 }
