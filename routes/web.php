@@ -115,6 +115,7 @@ Route::prefix('buscarresultados')->group( function(){
 Route::group(['prefix' => 'falcao'], function(){
     Route::get('abordagens', 'AbordagensController@index');
     Route::post('abordagens/store', 'AbordagensController@store');
+    Route::get('dados', 'AbordagensController@dados');
 });
 
 Route::get('/os', 'ordens_servicoController@index');

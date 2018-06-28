@@ -68,7 +68,8 @@ class AbordagensController extends Controller
     	$abordagem->patient_name = $request->input("name");
     	$abordagem->cpf = $request->input("rg");
     	$abordagem->rg = $request->input("cpf");
-    	$abordagem->medico_name = $request->input("medico");
+      $abordagem->medico_name = $request->input("medico");
+    	$abordagem->origem = $request->input("origem");
     	$abordagem->pedido_exame = $request->input("pedido_exame");
     	$abordagem->valor_orcado = $request->input("valor_orcado");
     	$abordagem->venda = $request->input("venda") ?? "false";
@@ -79,5 +80,155 @@ class AbordagensController extends Controller
 
    		return redirect()->back()->with('status', 'Erro');
 
+    }
+
+    public function dados( $now = false, $unidade = false)
+    {
+        $hour_start = $_GET["hour_start"] ?? "00:00";
+        $hour_end = $_GET["hour_end"] ?? "23:59";
+        
+        $unidade = ($unidade == true) ? $unidade : ($_GET["unidade"] ?? null);
+        // dd($unidade);
+        if( $now != false || isset($_GET["now"]) ){
+            date_default_timezone_set("America/Sao_Paulo");
+            $date_start = date('Y-m-d H:i', abs(strtotime(date('H:i')) - 60*15));
+            $date_end = date('Y-m-d H:i');
+            
+            $abordagens = abordagens::where([
+                ['unidade_id', '=', $unidade],
+                ['created_at', '>=', $date_start],
+                ['created_at', '<', $date_end]
+            ])
+            ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda']);
+
+            date_default_timezone_set("UTC");
+            $now = true;
+        }
+        elseif( isset($_GET["today"]) ){
+          $date_start = date('Y-m-d') . ' 00:00:00';   
+            $date_end = date('Y-m-d') . ' 23:59:59';
+            
+            $abordagens = abordagens::where([
+                ['unidade_id', '=', $unidade],
+                ['created_at', '>=', $date_start],
+                ['created_at', '<', $date_end]
+            ])
+            ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda']);
+        }
+        else 
+        {
+          if( isset($_GET["date_start"]) ){
+               $date_start = $_GET["date_start"] . " " . $hour_start;
+               $date_end = $_GET["date_end"] . " " . $hour_end;
+               
+               $hour_start = $hour_start;
+               $hour_end = $hour_end;
+            }else{
+                $date_start = date('Y-m-d') . ' 00:00';   
+                $date_end = date('Y-m-d') . ' 23:59';
+                $hour_start = null;
+                $hour_end = null;    
+            }
+            $abordagens = abordagens::where([
+                ['unidade_id', '=', $unidade],
+                ['created_at', '>=', $date_start],
+                ['created_at', '<=', $date_end]
+            ])
+            ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda']);
+        }
+
+        dd($abordagens);
+
+        $data = [];
+        $tmacollect = collect();
+        $tmacollect_medio = collect();
+        foreach ($abordagens as $i => $triagem) {
+            $triagem_dt_cha = strtotime($triagem->dt_cha);
+            $triagem_created_at = strtotime($triagem->created_at);
+            $tma = $triagem_dt_cha - $triagem_created_at;
+            // dd($tma);
+            // dd(date('H', $tma));
+            if( date('H', $tma) == '0' && date('i', $tma) < '40' ){
+                if( '7' <= date('H', $triagem_created_at) && date('H', $triagem_created_at) < '20'){
+                    // dd($triagem_dt_cha);
+                    // dd(date('d', $triagem_dt_cha));
+                    $data[$i] = $triagem;
+                    $data[$i]["ano"] = date('Y', $triagem_created_at);
+                    $data[$i]["mes"] = date('m', $triagem_created_at);
+                    $data[$i]["dia"] = date('d', $triagem_created_at);
+                    $data[$i]["hora"] = date('H', $triagem_created_at);
+                    $data[$i]["dt_cha"] = $triagem_dt_cha;
+                    $data[$i]["created_at"] = $triagem_created_at;
+                    $data[$i]["tma"] = date('H:i', $triagem_dt_cha - $triagem_created_at);
+
+                    $tma_time = $triagem_dt_cha - $triagem_created_at;
+                
+                    $tma = [
+                        'time' => $tma_time,
+                        'faixa' => date('H', $triagem_created_at),
+                    ];
+
+                    $tmacollect->prepend($tma);
+                $tmacollect_medio->prepend($tma_time);    
+                    $i++;
+                    // dd($tmacollect);
+                }
+            }
+        }
+        $grouped = $tmacollect->mapToGroups(function ($item, $key) {
+            return [$item['faixa'] => $item['time']];
+        });
+        // dd($tmacollect);
+        // dd($grouped);
+
+        $tmacollect_medio = $tmacollect_medio->sort()->values();
+
+        //Dividir em quartis:
+        $quantidade_por_quartil = floor($tmacollect_medio->count()/4);
+        // dd($quantidade_por_quartil);
+        $slice1 = $tmacollect_medio->slice(0, $quantidade_por_quartil);
+        $slice2 = $tmacollect_medio->slice($quantidade_por_quartil, $quantidade_por_quartil);
+        $slice3 = $tmacollect_medio->slice($quantidade_por_quartil*2, $quantidade_por_quartil);
+        $slice4 = $tmacollect_medio->slice($quantidade_por_quartil*3, $quantidade_por_quartil);
+
+        $piores_tempos = $tmacollect_medio->sortKeysDesc()->slice(0, 5);
+
+        return view('bi.triagem', [
+          "piores_tempos" => $piores_tempos,
+          "tmacollect" => $tmacollect_medio,
+            "unidade" => $unidade,
+          "servico" => $servico,
+          "now" => $now,
+          "slice1" => $slice1,
+          "slice2" => $slice2,
+          "slice3" => $slice3,
+          "slice4" => $slice4,
+            "faixa07" => $grouped->get('07') ? $grouped->get('07')->avg() : null,
+            "faixa08" => $grouped->get('08') ? $grouped->get('08')->avg() : null,
+            "faixa09" => $grouped->get('09') ? $grouped->get('09')->avg() : null,
+            "faixa10" => $grouped->get('10') ? $grouped->get('10')->avg() : null,
+            "faixa11" => $grouped->get('11') ? $grouped->get('11')->avg() : null,
+            "faixa12" => $grouped->get('12') ? $grouped->get('12')->avg() : null,
+            "faixa13" => $grouped->get('13') ? $grouped->get('13')->avg() : null,
+            "faixa14" => $grouped->get('14') ? $grouped->get('14')->avg() : null,
+            "faixa15" => $grouped->get('15') ? $grouped->get('15')->avg() : null,
+            "faixa16" => $grouped->get('16') ? $grouped->get('16')->avg() : null,
+            "faixa17" => $grouped->get('17') ? $grouped->get('17')->avg() : null,
+            "faixa18" => $grouped->get('18') ? $grouped->get('18')->avg() : null,
+            "faixa19" => $grouped->get('19') ? $grouped->get('19')->avg() : null,
+            "qtd_porfaixa07" => $grouped->get('07') ? $grouped->get('07')->count() : 0,
+            "qtd_porfaixa08" => $grouped->get('08') ? $grouped->get('08')->count() : 0,
+            "qtd_porfaixa09" => $grouped->get('09') ? $grouped->get('09')->count() : 0,
+            "qtd_porfaixa10" => $grouped->get('10') ? $grouped->get('10')->count() : 0,
+            "qtd_porfaixa11" => $grouped->get('11') ? $grouped->get('11')->count() : 0,
+            "qtd_porfaixa12" => $grouped->get('12') ? $grouped->get('12')->count() : 0,
+            "qtd_porfaixa13" => $grouped->get('13') ? $grouped->get('13')->count() : 0,
+            "qtd_porfaixa14" => $grouped->get('14') ? $grouped->get('14')->count() : 0,
+            "qtd_porfaixa15" => $grouped->get('15') ? $grouped->get('15')->count() : 0,
+            "qtd_porfaixa16" => $grouped->get('16') ? $grouped->get('16')->count() : 0,
+            "qtd_porfaixa17" => $grouped->get('17') ? $grouped->get('17')->count() : 0,
+            "qtd_porfaixa18" => $grouped->get('18') ? $grouped->get('18')->count() : 0,
+            "qtd_porfaixa19" => $grouped->get('19') ? $grouped->get('19')->count() : 0,
+        ]);
     }
 }
