@@ -45,6 +45,9 @@ class AbordagensController extends Controller
           'base'      => 'appRSXoEylxhvJ61B',
       ));
 
+      $request = $airtable->getContent( 'Contacts' );
+
+      //dd(Auth::user()->airtable_id);
       $expended = $airtable->getContent( 'Colaboradores/'.Auth::user()->airtable_id, false, [
           'RequisiçõesDeCompraVittalecas'      => [
               'table'         => 'Requisi%C3%A7%C3%B5es%20de%20Compra%20Vittalecas',
@@ -65,7 +68,6 @@ class AbordagensController extends Controller
     	$abordagem->patient_name = $request->input("name");
     	$abordagem->cpf = $request->input("rg");
     	$abordagem->rg = $request->input("cpf");
-    	$abordagem->origem = $request->input("origem");
     	$abordagem->medico_name = $request->input("medico");
     	$abordagem->pedido_exame = $request->input("pedido_exame");
     	$abordagem->valor_orcado = $request->input("valor_orcado");
