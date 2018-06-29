@@ -101,7 +101,7 @@ class AbordagensController extends Controller
             ])
             ->orderBy('user_id')
             ->orderBy('valor_orcado')
-            ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda', 'created_at']);
+            ->get();
 
             date_default_timezone_set("UTC");
             $now = true;
@@ -117,30 +117,13 @@ class AbordagensController extends Controller
             ])
             ->orderBy('user_id')
             ->orderBy('valor_orcado')
-            ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda', 'created_at']);
+            ->get();
         }
         else 
         {
-          if( isset($_GET["date_start"]) ){
-               $date_start = $_GET["date_start"] . " " . $hour_start;
-               $date_end = $_GET["date_end"] . " " . $hour_end;
-               
-               $hour_start = $hour_start;
-               $hour_end = $hour_end;
-            }else{
-                $date_start = date('Y-m-d') . ' 00:00';   
-                $date_end = date('Y-m-d') . ' 23:59';
-                $hour_start = null;
-                $hour_end = null;    
-            }
-            $abordagens = abordagens::where([
-                ['unidade', '=', $unidade],
-                ['created_at', '>=', $date_start],
-                ['created_at', '<=', $date_end]
-            ])
-            ->orderBy('user_id')
+            $abordagens = abordagens::orderBy('user_id')
             ->orderBy('valor_orcado')
-            ->get(['user_id', 'origem', 'medico_name', 'pedido_exame', 'valor_orcado', 'venda', 'created_at']);
+            ->get();
         }
 
 

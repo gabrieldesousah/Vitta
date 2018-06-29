@@ -127,14 +127,14 @@ $(function(){
                     <table class="table">
                         <thead>
                             <tr>
-                                <td id="abordagens_total">{{ count($abordagens) }} Abordagens</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td id="pedido_exame_total">{{ count($abordagens->where('pedido_exame', 'yes')) }} Pedidos de exame</td>
-                                <td id="valor_orcado_total">R$ {{ $abordagens->sum('valor_orcado') }} valores orçados no total</td>
-                                <td id="vendas_total">{{ count($abordagens->where('venda', 'true')) }} Vendas</td>
-                                <td></td>
+                                <th>Total: </th>
+                                <th id="abordagens_total">{{ count($abordagens) }} Abordagens</th>
+                                <th></th>
+                                <th></th>
+                                <th id="pedido_exame_total">{{ count($abordagens->where('pedido_exame', 'yes')) }} Pedidos de exame</th>
+                                <th id="valor_orcado_total">R$ {{ $abordagens->sum('valor_orcado') }} valores orçados no total</th>
+                                <th id="vendas_total">{{ count($abordagens->where('venda', 'true')) }} Vendas</th>
+                                <th></th>
                             </tr>
                         </thead>
                     </table>
