@@ -140,7 +140,7 @@ $(function(){
                                 <td>{{ $u->sum('valor_orcado') }}</td>
                                 <td>{{ $u->where('venda', 'true')->sum('valor_orcado') }}</td>
                                 <td>{{ $u->where('venda', 'true')->count() }}</td>
-                                <td>{{ ($u->where('venda', 'true')->count())/($u->count())*100 }}%</td>
+                                <td>{{ number_format (($u->where('venda', 'true')->count())/($u->count()), 2)*100 }}%</td>
                                 <td>{{ number_format( ($u->where('venda', 'true')->sum('valor_orcado') )/( $u->where('venda', 'true')->count()), 2 ) }}</td>
                             </tr>
                         @endforeach
