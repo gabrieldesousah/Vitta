@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Abordagens;
+use App\User;
 
 use TANIOS\Airtable\Airtable;
 use Auth;
@@ -89,22 +90,33 @@ class AbordagensController extends Controller
         
         $unidade = isset($unidade) ? $unidade : ($_GET["unidade"] ?? 'Centro');
         // dd($unidade);
-        if( $now != false || isset($_GET["now"]) ){
+        if( isset($_GET["date_start"]) ){
             date_default_timezone_set("America/Sao_Paulo");
-            $date_start = date('Y-m-d H:i', abs(strtotime(date('H:i')) - 60*15));
-            $date_end = date('Y-m-d H:i');
+            $date_start = $_GET["date_start"] . " " . $hour_start;
+            $date_end = $_GET["date_end"] . " " . $hour_end;
+
+            $unidade = $_GET["unidade"] ?? 'Centro';
+            $origem = $_GET["origem"] ?? 1;
             
             $abordagens = abordagens::where([
                 ['unidade', '=', $unidade],
+                ['origem', '=', $origem],
                 ['created_at', '>=', $date_start],
                 ['created_at', '<', $date_end]
             ])
+            ->orderBy('created_at')
             ->orderBy('user_id')
             ->orderBy('valor_orcado')
             ->get();
 
+            // dd($abordagens);
+
+            // dd($_GET["unidade"]);
+            // dd($_GET["origem"]);
+            // dd($date_start);
+            // dd($date_end);
+
             date_default_timezone_set("UTC");
-            $now = true;
         }
         elseif( isset($_GET["today"]) ){
           $date_start = date('Y-m-d') . ' 00:00:00';   
@@ -115,20 +127,44 @@ class AbordagensController extends Controller
                 ['created_at', '>=', $date_start],
                 ['created_at', '<', $date_end]
             ])
+            ->orderBy('created_at')
             ->orderBy('user_id')
             ->orderBy('valor_orcado')
             ->get();
         }
         else 
         {
-            $abordagens = abordagens::orderBy('user_id')
+            $abordagens = abordagens::orderBy('created_at')
+            ->orderBy('user_id')
             ->orderBy('valor_orcado')
             ->get();
         }
 
+        $users = $abordagens->groupBy('user_id')->toArray();
 
         return view('os.dados', [
           "abordagens" => $abordagens,
+          "users" => $users
         ]);
+    }
+
+    public function exportar(){
+      $dadosA = abordagens::orderBy('created_at')
+        ->orderBy('user_id')
+        ->orderBy('valor_orcado')
+        ->get();
+
+      header("Content-Transfer-Encoding: UTF-8");
+      header("Content-type: text/csv");
+      header("Content-Disposition: attachment; filename=file.csv");
+      header("Pragma: no-cache");
+      header("Expires: 0");
+
+      foreach($dadosA as $dados)
+      {
+          echo $dados->id . "," . $dados->unidade . "," . $dados->user_id . "," . $dados->patient_name . "," . $dados->cpf . "," . $dados->rg . "," . $dados->origem . "," . $dados->medico_name . "," . $dados->pedido_exame . "," . $dados->valor_orcado . "," . $dados->venda . "," . $dados->created_at ."
+          ";
+      }
+      // return $dados;
     }
 }
