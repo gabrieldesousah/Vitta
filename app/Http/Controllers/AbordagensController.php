@@ -95,12 +95,10 @@ class AbordagensController extends Controller
             $date_start = $_GET["date_start"] . " " . $hour_start;
             $date_end = $_GET["date_end"] . " " . $hour_end;
 
-            $unidade = $_GET["unidade"] ?? 'Centro';
-            $origem = $_GET["origem"] ?? 1;
+            $unidade = $_GET["unidade"] ?? null;
+            $origem = $_GET["origem"] ?? null;
             
             $abordagens = abordagens::where([
-                ['unidade', '=', $unidade],
-                ['origem', '=', $origem],
                 ['created_at', '>=', $date_start],
                 ['created_at', '<', $date_end]
             ])
@@ -109,7 +107,13 @@ class AbordagensController extends Controller
             ->orderBy('valor_orcado')
             ->get();
 
-            // dd($abordagens);
+            if( $unidade != null ){
+              $abordagens = $abordagens->where('unidade', $unidade);
+            }
+
+            if( $origem != null ){
+              $abordagens = $abordagens->where('origem', $origem);
+            }
 
             // dd($_GET["unidade"]);
             // dd($_GET["origem"]);

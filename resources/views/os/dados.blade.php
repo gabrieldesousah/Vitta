@@ -85,6 +85,7 @@ $(function(){
                     <div class="col-lg-2">
                         Origem:
                         <select name="origem" class="form-control">
+                            <option value="">Todos</option>
                             <option value="1">Consulta</option>
                             <option value="2">Retorno</option>
                             <option value="3">Exames</option>
@@ -120,8 +121,11 @@ $(function(){
                                 <th>Com pedidos de exames</th>
                                 <th>Sem pedidos de exames</th>
                                 <th>Valor Orçado</th>
+                                <th>Valor Fechado</th>
                                 <th>Houve venda</th>
-                                </tr>
+                                <th>% Fechados</th>
+                                <th>Ticket Médio</th>
+                            </tr>
                         @foreach($users as $user)
                             <?php 
                             $u = collect($user); 
@@ -134,7 +138,10 @@ $(function(){
                                 <td>{{ $u->where('pedido_exame', 'yes')->count() }}</td>
                                 <td>{{ $u->where('pedido_exame', 'no')->count() }}</td>
                                 <td>{{ $u->sum('valor_orcado') }}</td>
+                                <td>{{ $u->where('venda', 'true')->sum('valor_orcado') }}</td>
                                 <td>{{ $u->where('venda', 'true')->count() }}</td>
+                                <td>{{ ($u->where('venda', 'true')->count())/($u->count())*100 }}%</td>
+                                <td>{{ number_format( ($u->where('venda', 'true')->sum('valor_orcado') )/( $u->where('venda', 'true')->count()), 2 ) }}</td>
                             </tr>
                         @endforeach
                     </table>
