@@ -94,7 +94,7 @@ $(function(){
                         </select>
                     </div>
                     <div class="col-lg-2">
-                        Data inicial: <input type="date" name="date_start" value='{{ $_GET["date_start"] or date("Y-m-d",strtotime("-1 days")) }}' placeholder='{{ $_GET["date_start"] or date("Y-m-d",strtotime("-1 days")) }}' class="form-control">
+                        Data inicial: <input type="date" name="date_start" value='{{ $_GET["date_start"] or date("Y-m-d",strtotime("-0 days")) }}' placeholder='{{ $_GET["date_start"] or date("Y-m-d",strtotime("-0 days")) }}' class="form-control">
                     </div>
                     <div class="col-lg-2">
                         Data final: <input type="date" name="date_end" value="{{ $_GET['date_end'] or date('Y-m-d') }}" placeholder="{{ $_GET['date_end'] or date('Y-m-d') }}" class="form-control">
@@ -140,8 +140,12 @@ $(function(){
                                 <td>{{ $u->sum('valor_orcado') }}</td>
                                 <td>{{ $u->where('venda', 'true')->sum('valor_orcado') }}</td>
                                 <td>{{ $u->where('venda', 'true')->count() }}</td>
-                                <td>{{ number_format (($u->where('venda', 'true')->count())/($u->count()), 2)*100 }}%</td>
-                                <td>{{ number_format( ($u->where('venda', 'true')->sum('valor_orcado') )/( $u->where('venda', 'true')->count()), 2 ) }}</td>
+                                <td>
+                                    {{ ( $u->count() != 0 ) ? number_format (($u->where('venda', 'true')->count())/($u->count()), 2)*100 : 0 }}%
+                                </td>
+                                <td>
+                                    {{ ( $u->where('venda', 'true')->count() != 0 ) ? number_format( ($u->where('venda', 'true')->sum('valor_orcado') )/( $u->where('venda', 'true')->count()), 2 ) : 0 }}
+                                </td>
                             </tr>
                         @endforeach
                     </table>
