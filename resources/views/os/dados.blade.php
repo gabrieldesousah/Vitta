@@ -157,7 +157,7 @@ $(function(){
                             <th></th>
                             <th></th>
                             <th id="pedido_exame_total">{{ count($abordagens->where('pedido_exame', 'yes')) }} Pedidos de exame</th>
-                            <th id="valor_orcado_total">R$ {{ $abordagens->sum('valor_orcado') }} valores orçados no total</th>
+                            <th id="valor_orcado_total">R$ {{ $abordagens->where('venda', 'true')->sum('valor_orcado') }} reais finalizados</th>
                             <th id="vendas_total">{{ count($abordagens->where('venda', 'true')) }} Vendas</th>
                             <th></th>
                         </tr>
