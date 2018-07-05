@@ -158,15 +158,17 @@ class AbordagensController extends Controller
         ->orderBy('valor_orcado')
         ->get();
 
-      header("Content-Transfer-Encoding: UTF-8");
-      header("Content-type: text/csv");
+      header("Content-Transfer-Encoding: utf-8");
+      header("Content-type: text/csv; charset=utf-8");
       header("Content-Disposition: attachment; filename=file.csv");
       header("Pragma: no-cache");
       header("Expires: 0");
 
+      echo "id".";". "unidade".";"."user_id".";"."patient_name".";"."cpf".";"."rg".";"."origem".";"."medico_name".";"."pedido_exame".";"."valor_orcado".";"."venda".";"."created_at" ."
+          ";
       foreach($dadosA as $dados)
       {
-          echo $dados->id . "," . $dados->unidade . "," . $dados->user_id . "," . $dados->patient_name . "," . $dados->cpf . "," . $dados->rg . "," . $dados->origem . "," . $dados->medico_name . "," . $dados->pedido_exame . "," . $dados->valor_orcado . "," . $dados->venda . "," . $dados->created_at ."
+          echo $dados->id.";".$dados->unidade.";".$dados->user_id.";".utf8_decode($dados->patient_name).";".$dados->cpf.";".$dados->rg.";".$dados->origem.";".utf8_decode($dados->medico_name).";".$dados->pedido_exame.";".$dados->valor_orcado.";".$dados->venda.";".$dados->created_at ."
           ";
       }
       // return $dados;
