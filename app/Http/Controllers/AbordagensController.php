@@ -164,11 +164,11 @@ class AbordagensController extends Controller
       header("Pragma: no-cache");
       header("Expires: 0");
 
-      echo "id".";". "unidade".";"."user_id".";"."patient_name".";"."cpf".";"."rg".";"."origem".";"."medico_name".";"."pedido_exame".";"."valor_orcado".";"."venda".";"."created_at" ."
+      echo "id".";". "unidade".";"."user".";"."patient_name".";"."cpf".";"."rg".";"."origem".";"."medico_name".";"."pedido_exame".";"."valor_orcado".";"."venda".";"."created_at" ."
           ";
       foreach($dadosA as $dados)
       {
-          echo $dados->id.";".$dados->unidade.";".$dados->user_id.";".utf8_decode($dados->patient_name).";".$dados->cpf.";".$dados->rg.";".$dados->origem.";".utf8_decode($dados->medico_name).";".$dados->pedido_exame.";".$dados->valor_orcado.";".$dados->venda.";".$dados->created_at ."
+          echo $dados->id.";".$dados->unidade.";".$dados->user->name.";".utf8_decode($dados->patient_name).";".$dados->cpf.";".$dados->rg.";".$dados->origem.";".utf8_decode($dados->medico_name).";".$dados->pedido_exame.";".$dados->valor_orcado.";".$dados->venda.";".$dados->created_at ."
           ";
       }
       // return $dados;
