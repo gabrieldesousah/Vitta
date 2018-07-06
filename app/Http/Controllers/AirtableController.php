@@ -20,8 +20,7 @@ class AirtableController extends Controller
 
 		$response = $request->getResponse();
 
-		$user = new User();
-		$user = $user->find(Auth::user()->id);
+		$user = Auth::user();
 
 		foreach( $response['records'] as $record ){
 			if(isset($record->fields->Nome) and $record->fields->Nome == Auth::user()->name)
@@ -41,6 +40,21 @@ class AirtableController extends Controller
 				//echo $record->id;
 				$user->airtable_id = $record->id;
 			}
+		}
+
+		if( $user->airtable_id != null ){
+			echo "
+			<h1>
+				Seus dados não foram encontrados... você precisa preencher esse formulário: 
+				<br>
+				<a href='https://airtable.com/shr1Rq8YgNsekwJu2'>Cadastro de colaboradores</a>
+				<br><br>
+				<a href='https://airtable.com/shrs9BETcpqwpakuj'>Cadastro de médicos</a>
+
+				<br><br>
+				E colocar os mesmos dados no login.
+			</h1>
+			";
 		}
 
 		$user->save();

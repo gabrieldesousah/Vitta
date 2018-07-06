@@ -89,7 +89,11 @@ Route::get('/home', 'HomeController@index')->name('home');
 /**************************************************
 Pacientes
 **************************************************/
+Route::get('/listapacientes', 'PacientesController@lista');
+
 Route::get('/pacientes', 'PacientesController@create');
+Route::get('/pacientes/{paciente}', 'PacientesController@show_paciente');
+Route::post('/pacientes/{paciente}/edit', 'PacientesController@update');
 Route::get('/pacientes/create', 'PacientesController@create');
 Route::post('/pacientes/store', 'PacientesController@store');
 

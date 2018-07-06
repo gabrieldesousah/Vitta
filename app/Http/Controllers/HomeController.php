@@ -26,6 +26,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if( Auth::user()->airtable_id == null ){
+            return redirect( '/airtable' );
+        }
+        
         $airtable = new Airtable(array(
             'api_key'   => 'keyyQI5fROPrZ7QZF',
             'base'      => 'appRSXoEylxhvJ61B',

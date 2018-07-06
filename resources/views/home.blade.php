@@ -61,7 +61,6 @@
                             <b>Email Corporativo:</b> {{ $user->fields->EmailCorporativo }}
                             <br>
                         @endif
-
                     </div>
                 </div>
             </div>
@@ -114,6 +113,12 @@
                         <b>Buscar Resultados</b>
 
                         <a href="{{ url('buscarresultados') }}" class="btn btn-primary btn-custom" target="_blank">Buscar Resultados</a>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <b>Lista de pacientes</b>
+
+                        <a href="{{ url('listapacientes') }}" class="btn btn-primary btn-custom" target="_blank">Listar Pacientes</a>
                     </div>
 
                 </div>

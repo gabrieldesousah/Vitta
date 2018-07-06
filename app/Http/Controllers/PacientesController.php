@@ -6,6 +6,9 @@ use App\exames_resultados;
 use App\Paciente;
 use Illuminate\Http\Request;
 
+use TANIOS\Airtable\Airtable;
+use Auth;
+
 class PacientesController extends Controller
 {
     /**
@@ -16,6 +19,12 @@ class PacientesController extends Controller
     public function index()
     {
         return view('pacientes.auth');
+    }
+
+    public function lista()
+    {
+        $pacientes = Paciente::all();
+        return view('pacientes.lista', ['pacientes' => $pacientes]);
     }
 
     /**
@@ -39,10 +48,36 @@ class PacientesController extends Controller
         $cpf = preg_replace('/[^0-9]/', '', $request->input('cpf'));
         $rg  = preg_replace('/[^0-9]/', '', $request->input('rg'));
 
+        if( isset(Auth::user()->airtable_id) ){
+            $airtable = new Airtable(array(
+                  'api_key'   => 'keyyQI5fROPrZ7QZF',
+                  'base'      => 'appRSXoEylxhvJ61B',
+              ));
+
+              $airt = $airtable->getContent( 'Contacts' );
+
+              //dd(Auth::user()->airtable_id);
+              $expended = $airtable->getContent( 'Colaboradores/'.Auth::user()->airtable_id, false, [
+                  'RequisiçõesDeCompraVittalecas'      => [
+                      'table'         => 'Requisi%C3%A7%C3%B5es%20de%20Compra%20Vittalecas',
+                      'relations'     => [
+                          'Produto'  => 'Cat%C3%A1logo%20Vittalecas',
+                      ]
+                  ],
+                  'Contratações'      => 'Contrata%C3%A7%C3%B5es',
+                  'Score' => 'Score',
+                  'ScoreMédicoLink' => 'Score%20M%C3%A9dicos',
+              ]);
+              $user = $expended->getResponse();
+
+            $unidade = $user->fields->Unidade[0] ?? null;
+        }
+
         $paciente = Paciente::where([
             ['cpf', '<>', null],
             ['cpf', $cpf],
         ])->first();
+
         if( $paciente != null )
         {
             $paciente = Paciente::where([
@@ -52,6 +87,7 @@ class PacientesController extends Controller
 
             if( $paciente != null )
             {
+                $paciente->unidade = $unidade;
                 $paciente->name = strtoupper($this->tirarAcentos(preg_replace("/[^A-zÀ-ú ]/",'',$request->input('name')))) ?? $paciente->name;
                 $paciente->phone = preg_replace('/[^0-9]/', '', $request->input('phone')) ?? $paciente->phone;
                 $paciente->born = $request->input('born');
@@ -61,29 +97,31 @@ class PacientesController extends Controller
                 $paciente->date_exam = $request->input('date_exam');
                 // $paciente->password = md5($request->input('password'));
 
+
                 if( $paciente->save() ){
                     return redirect('pacientes/create')->with('status', 'Paciente atualizado.');
                 }else{
                     return back()->withInput();
                 }
             }
-            else
-            {
-                $paciente = new Paciente;
-                $paciente->name = strtoupper($this->tirarAcentos(preg_replace("/[^A-zÀ-ú ]/",'',$request->input('name'))));
-                $paciente->phone = preg_replace('/[^0-9]/', '', $request->input('phone'));
-                $paciente->born = $request->input('born');
-                $paciente->cpf = $cpf;
-                $paciente->rg = $rg;
-                $paciente->password = md5($request->input('password'));
+        }
+        else
+        {
+            $paciente = new Paciente;
+            $paciente->unidade = $unidade;
+            $paciente->name = strtoupper($this->tirarAcentos(preg_replace("/[^A-zÀ-ú ]/",'',$request->input('name'))));
+            $paciente->phone = preg_replace('/[^0-9]/', '', $request->input('phone'));
+            $paciente->born = $request->input('born');
+            $paciente->cpf = $cpf;
+            $paciente->rg = $rg;
+            $paciente->password = md5($request->input('password'));
 
-                $paciente->date_exam = $request->input('date_exam');
+            $paciente->date_exam = $request->input('date_exam');
 
-                if( $paciente->save() ){
-                    return redirect('pacientes/create')->with('status', 'Paciente cadastrado com sucesso.');
-                }else{
-                    return back()->withInput();
-                }
+            if( $paciente->save() ){
+                return redirect('pacientes/create')->with('status', 'Paciente cadastrado com sucesso.');
+            }else{
+                return back()->withInput();
             }
         }
     }
@@ -168,9 +206,14 @@ class PacientesController extends Controller
      * @param  \App\Paciente  $paciente
      * @return \Illuminate\Http\Response
      */
-    public function edit(Paciente $paciente)
+    public function show_paciente(Paciente $paciente)
     {
-        //
+        $exames = exames_resultados::where('paciente_id', $paciente->id)->get();
+
+        return view('pacientes.show_paciente', [
+            'paciente' => $paciente,
+            'exames' => $exames
+        ]);
     }
 
     /**
@@ -182,7 +225,50 @@ class PacientesController extends Controller
      */
     public function update(Request $request, Paciente $paciente)
     {
-        //
+        $file = $request->file('file');
+
+        // if ($request->hasFile('file')) {
+        //     //
+        // }
+
+        $extension = $request->file->extension();
+
+        $arquivo_destino = base_path().DIRECTORY_SEPARATOR.
+        'storage/app/public/resultados'.
+        DIRECTORY_SEPARATOR.
+        $paciente->id.'-'.
+        time().'-'.
+        $request->laboratorio.'-'.
+        $request->file->getClientOriginalName();
+        
+        if( $paciente != null )
+        {
+            if( move_uploaded_file($request->file, $arquivo_destino) )
+            {
+                    $exames_resultados = new exames_resultados;
+                    $exames_resultados->paciente_id = $paciente->id ?? null;
+                    $exames_resultados->laboratory = $request->laboratorio;
+                    $exames_resultados->path_file = 'storage/app/public/resultados'.
+                        DIRECTORY_SEPARATOR.
+                        $paciente->id.'-'.
+                        time().'-'.
+                        $request->laboratorio.'-'.
+                        $request->file->getClientOriginalName();
+
+                    $exames_resultados->ped = time();
+                    $exames_resultados->anoped = time();
+
+                    if( $exames_resultados->save() ){
+                        return redirect('pacientes/'.$paciente->id)->with('status', 'Exame adicionado com sucesso');
+                    }
+            }
+            else
+            {
+                echo "Erro para escrever o arquivo";
+                echo "<br>";
+                return redirect('pacientes/'.$paciente->id)->with('status', 'Erro para adicionar o exame');
+            }
+        }
     }
 
     /**
