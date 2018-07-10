@@ -45,6 +45,10 @@ class PacientesController extends Controller
      */
     public function store(Request $request)
     {
+      if( ! Auth::check() ){
+        return redirect("login");
+      }
+      
         $cpf = preg_replace('/[^0-9]/', '', $request->input('cpf'));
         $rg  = preg_replace('/[^0-9]/', '', $request->input('rg'));
 
@@ -71,6 +75,8 @@ class PacientesController extends Controller
               $user = $expended->getResponse();
 
             $unidade = $user->fields->Unidade[0] ?? null;
+        }else{
+            $unidade = null;
         }
 
         $paciente = Paciente::where([
