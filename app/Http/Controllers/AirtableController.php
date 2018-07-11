@@ -42,7 +42,7 @@ class AirtableController extends Controller
 				}
 			}
 
-			if( $user->airtable_id != null ){
+			if( $user->airtable_id == null ){
 				echo "
 				<h1>
 					Seus dados não foram encontrados... você precisa preencher esse formulário: 
@@ -55,10 +55,10 @@ class AirtableController extends Controller
 					E colocar os mesmos dados no login.
 				</h1>
 				";
+				die();
 			}
 
-			if($user->save()){
-				return redirect('/dashboard');
-			}
+			$user->save();
+			return redirect('/dashboard');
     }
 }
