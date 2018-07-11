@@ -111,24 +111,22 @@ class PacientesController extends Controller
                 }
             }
         }
-        else
-        {
-            $paciente = new Paciente;
-            $paciente->unidade = $unidade;
-            $paciente->name = strtoupper($this->tirarAcentos(preg_replace("/[^A-zÀ-ú ]/",'',$request->input('name'))));
-            $paciente->phone = preg_replace('/[^0-9]/', '', $request->input('phone'));
-            $paciente->born = $request->input('born');
-            $paciente->cpf = $cpf;
-            $paciente->rg = $rg;
-            $paciente->password = md5($request->input('password'));
+     
+        $paciente = new Paciente;
+        $paciente->unidade = $unidade;
+        $paciente->name = strtoupper($this->tirarAcentos(preg_replace("/[^A-zÀ-ú ]/",'',$request->input('name'))));
+        $paciente->phone = preg_replace('/[^0-9]/', '', $request->input('phone'));
+        $paciente->born = $request->input('born');
+        $paciente->cpf = $cpf;
+        $paciente->rg = $rg;
+        $paciente->password = md5($request->input('password'));
 
-            $paciente->date_exam = $request->input('date_exam');
+        $paciente->date_exam = $request->input('date_exam');
 
-            if( $paciente->save() ){
-                return redirect('pacientes/create')->with('status', 'Paciente cadastrado com sucesso.');
-            }else{
-                return back()->withInput();
-            }
+        if( $paciente->save() ){
+            return redirect('pacientes')->with('status', 'Paciente cadastrado com sucesso.');
+        }else{
+            return back()->withInput();
         }
     }
 
