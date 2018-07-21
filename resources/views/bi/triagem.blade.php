@@ -94,27 +94,74 @@
                           <strong>
                                
                           <?php 
-                          ( date("H:i:s",$piores_tempos->last()) < "00:05:00" ) 
-                          ? $color="verde" 
+                          // dd($servico);
+                          if( $servico == "recepcao" ){
+                            $param_amarelo = "00:10:00";
+                            $param_verde = "00:15:00";
+                          }else{
+                            $param_amarelo = "00:5:00";
+                            $param_verde = "00:10:00";                            
+                          }
+
+                          ( date("H:i:s",$piores_tempos->last()) < $param_amarelo ) 
+                          ? $color_="verde" 
                           : (
-                              ( date("H:i:s",$piores_tempos->last()) < "00:09:00" ) 
-                                ? $color="amarelo"
+                              ( date("H:i:s",$piores_tempos->last()) < $param_verde ) 
+                                ? $color_="amarelo"
                                 : $color="vermelho"
                             );
+
+                          $cor_pior_tempo = ( date("H:i:s",$piores_tempos->last()) < $param_amarelo ) 
+                          ? $color_="verde" 
+                          : (
+                              ( date("H:i:s",$piores_tempos->last()) < $param_verde ) 
+                                ? $color_="amarelo"
+                                : $color="vermelho"
+                            );
+                          
+                          $cor_pior_quartil = ( date("H:i:s",$slice4->avg()) < $param_amarelo ) 
+                          ? $color_="verde" 
+                          : (
+                              ( date("H:i:s",$slice4->avg()) < $param_verde ) 
+                                ? $color_="amarelo"
+                                : $color="vermelho"
+                            );
+                          
+                          $cor_media = ( date("H:i:s",$tmacollect->avg()) < $param_amarelo ) 
+                          ? $color_="verde" 
+                          : (
+                              ( date("H:i:s",$tmacollect->avg()) < $param_verde ) 
+                                ? $color_="amarelo"
+                                : $color="vermelho"
+                            );
+
                           ?>
                           <div class="row">
-                            <img src="{{ url('public/img/icons', [$color]) }}.png" alt="{{ $color }}" title="{{ $color }}" width="60" height="120" align="left">
-                            @switch($color)
-                                @case("verde")
-                                    O tempo de espera está dentro do planejado, pode continuar ofertando nossos serviços da forma mais completa possível
-                                    @break
-                                @case("amarelo")
-                                    Nosso tempo de espera está se elevando... Vamos tomar cuidado para não prejudicar a percepção do paciente
-                                    @break
-                                @case("vermelho")
-                                    Cuidado! Nossos pacientes estão esperando demais, acelere o processo e diminua as informações passadas para eles
-                                    @break
-                            @endswitch
+                            <div class="col-lg-4">
+                              <h3>Piores tempos</h3>
+                              <img src="{{ url('public/img/icons', [$cor_pior_tempo]) }}.png" alt="{{ $cor_pior_tempo }}" title="{{ $cor_pior_tempo }}" width="60" height="120" align="left">
+                            </div>
+                            <div class="col-lg-4">
+                              <h3>Pior quartil</h3>
+                              <img src="{{ url('public/img/icons', [$cor_pior_quartil]) }}.png" alt="{{ $cor_pior_quartil }}" title="{{ $cor_pior_quartil }}" width="60" height="120" align="left">
+                            </div>
+                            <div class="col-lg-4">
+                              <h3>Média</h3>
+                              <img src="{{ url('public/img/icons', [$cor_media]) }}.png" alt="{{ $cor_media }}" title="{{ $cor_media }}" width="60" height="120" align="left">
+                            </div>
+                            <div class="col-lg-12">
+                              @switch($cor_media)
+                                  @case("verde")
+                                      O tempo de espera está dentro do planejado, pode continuar ofertando nossos serviços da forma mais completa possível
+                                      @break
+                                  @case("amarelo")
+                                      Nosso tempo de espera está se elevando... Vamos tomar cuidado para não prejudicar a percepção do paciente
+                                      @break
+                                  @case("vermelho")
+                                      Cuidado! Nossos pacientes estão esperando demais, acelere o processo e diminua as informações passadas para eles
+                                      @break
+                              @endswitch
+                            </div>
                           </div>
                       @endif
                     </div>
