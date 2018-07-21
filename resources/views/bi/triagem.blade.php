@@ -146,7 +146,7 @@
                               <img src="{{ url('public/img/icons', [$cor_pior_quartil]) }}.png" alt="{{ $cor_pior_quartil }}" title="{{ $cor_pior_quartil }}" width="60" height="120" align="left">
                             </div>
                             <div class="col-lg-4">
-                              <h3>Média</h3>
+                              <h3>Média geral</h3>
                               <img src="{{ url('public/img/icons', [$cor_media]) }}.png" alt="{{ $cor_media }}" title="{{ $cor_media }}" width="60" height="120" align="left">
                             </div>
                             <div class="col-lg-12">
