@@ -97,16 +97,16 @@
                           // dd($servico);
                           if( $servico == "recepcao" ){
                             $param_amarelo = "00:10:00";
-                            $param_verde = "00:15:00";
+                            $param_verm = "00:15:00";
                           }else{
-                            $param_amarelo = "00:5:00";
-                            $param_verde = "00:10:00";                            
+                            $param_amarelo = "00:7:00";
+                            $param_verm = "00:10:00";                            
                           }
 
                           ( date("H:i:s",$piores_tempos->last()) < $param_amarelo ) 
                           ? $color_="verde" 
                           : (
-                              ( date("H:i:s",$piores_tempos->last()) < $param_verde ) 
+                              ( date("H:i:s",$piores_tempos->last()) < $param_verm ) 
                                 ? $color_="amarelo"
                                 : $color="vermelho"
                             );
@@ -114,7 +114,7 @@
                           $cor_pior_tempo = ( date("H:i:s",$piores_tempos->last()) < $param_amarelo ) 
                           ? $color_="verde" 
                           : (
-                              ( date("H:i:s",$piores_tempos->last()) < $param_verde ) 
+                              ( date("H:i:s",$piores_tempos->last()) < $param_verm ) 
                                 ? $color_="amarelo"
                                 : $color="vermelho"
                             );
@@ -122,7 +122,7 @@
                           $cor_pior_quartil = ( date("H:i:s",$slice4->avg()) < $param_amarelo ) 
                           ? $color_="verde" 
                           : (
-                              ( date("H:i:s",$slice4->avg()) < $param_verde ) 
+                              ( date("H:i:s",$slice4->avg()) < $param_verm ) 
                                 ? $color_="amarelo"
                                 : $color="vermelho"
                             );
@@ -130,7 +130,7 @@
                           $cor_media = ( date("H:i:s",$tmacollect->avg()) < $param_amarelo ) 
                           ? $color_="verde" 
                           : (
-                              ( date("H:i:s",$tmacollect->avg()) < $param_verde ) 
+                              ( date("H:i:s",$tmacollect->avg()) < $param_verm ) 
                                 ? $color_="amarelo"
                                 : $color="vermelho"
                             );
