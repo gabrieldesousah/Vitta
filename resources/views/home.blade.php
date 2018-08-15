@@ -95,7 +95,7 @@
     </div>
     @endif 
 
-    @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Laboratório" ))
+    @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Laboratório" || $user->fields->HistóricoSetores[0] == "Laboratório" ))
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
@@ -127,7 +127,7 @@
     </div>
     @endif
 
-    @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Call Center " ))
+    @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Call Center " || $user->fields->HistóricoSetores[0] == "Call Center " ))
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
@@ -147,7 +147,7 @@
     </div>
     @endif
 
-    @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Recepção" ||  $user->fields->Função[0] == "Falcão" ))
+    @if( isset($user->fields->Função[0]) && ( $user->fields->Função[0] == "Administração" ||  $user->fields->Função[0] == "Recepção" ||  $user->fields->Função[0] == "Falcão" || $user->fields->HistóricoSetores[0] == "Recepção" ))
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">

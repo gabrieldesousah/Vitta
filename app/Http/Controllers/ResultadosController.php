@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class ResultadosController extends Controller
 {
     public function __construct(){
-        ini_set('max_execution_time', '2000');
+        ini_set('max_execution_time', '5000');
     }
 
     public function index(){
